@@ -1,0 +1,109 @@
+"Copied from test.dabu xD";
+Func list_fill_with[T](n As Nat, v As T) As List[T]
+    Let r As List[T] = [];
+    For index = 0 To n Then
+        r = cons(v, r);
+    End
+    Return r;
+End
+
+Let l0 As List[Nat] = list_fill_with(length(l), 0);
+Let l1 As List[Nat] = list_fill_with(length(l), 0);
+Let l2 As List[Nat] = list_fill_with(length(l), 0);
+
+Func Pow(xp As Nat, xe As Nat) As Nat
+    Let result As Nat = 1;
+    For iter = 0 To xe Then
+        result = result * xp;
+    End
+    Return result;
+End
+
+Func CharListToNat(cl As List[Char]) As Nat
+    Let res As Nat = 0;
+    For ix = 0 To length(cl) Then
+        res = res + (to_ascii(cl(ix)) - 48) * Pow(10, length(cl) - ix - 1);
+    End
+    Return res;
+End
+
+For i = 0 To length(l) Then
+    Let s As List[Char] = list_fill_with(5, ' ');
+    Let x As List[Char] = to_char_list(l(i));
+    For j = 0 To 5 Then
+        s(j) = x(j);
+    End
+    l0(i) = CharListToNat(s);
+    
+    For j = 8 To 13 Then
+        s(j - 8) = x(j);
+    End
+    l1(i) = CharListToNat(s);
+End
+
+Func Max(mi1 As Nat, mi2 As Nat) As Nat
+    If mi1 > mi2 Then
+        Return mi1;
+    Else
+        Return mi2;
+    End
+End
+
+"Insertion sort";
+Func Sort(sa As List[Nat]) As List[Nat]
+    Let i0 As Nat = 1;
+    Let ca As List[Nat] = sa;
+    While i0 < length(sa) Then
+        Let i1 As Nat = i0;
+        While i1 > 0 and ca(Max(0, i1 - 1)) > ca(i1) Then
+            Let temp1 As Nat = ca(i1);
+            Let temp2 As Nat = ca(i1 - 1);
+            ca(i1) = temp2;
+            ca(i1 - 1) = temp1;
+            i1 = i1 - 1;
+        End
+        i0 = i0 + 1;
+    End
+    Return ca;
+End
+
+l0 = Sort(l0);
+l1 = Sort(l1);
+
+Func Abs(a As Nat) As Nat
+    If a > -1 Then
+        Return a;
+    Else
+        Return a * -1;
+    End
+End
+
+For i = 0 To length(l) Then
+    l2(i) = Abs(l0(i) - l1(i));
+End
+
+Func Sum(sx As List[Nat]) As Nat
+    Let su = 0;
+    For i = 0 To length(sx) Then
+        su = su + sx(i);
+    End
+    Return su;
+End
+
+print(Sum(l2));
+
+Func Count(cnt As Nat, cnta As List[Nat]) As Nat
+    Let cntres = 0;
+    For i = 0 To length(cnta) Then
+        If cnta(i) == cnt Then
+            cntres = cntres + 1;
+        End
+    End
+    Return cntres;
+End
+
+For i = 0 To length(l) Then
+    l0(i) = l0(i) * Count(l0(i), l1);
+End
+
+print(Sum(l0));
