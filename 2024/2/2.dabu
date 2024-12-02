@@ -1,0 +1,158 @@
+"Dabulang STD start ( ͡° ͜ʖ ͡°)";
+Func Abs(absX As Nat) As Nat
+    If absX > -1 Then
+        Return absX;
+    Else
+        Return absX * -1;
+    End
+End
+
+Func Pow(powX As Nat, powY As Nat) As Nat
+    Let powR As Nat = 1;
+    For powI = 0 To powY Then
+        powR = powR * powX;
+    End
+    Return powR;
+End
+
+Func CharListToNat(CLTNcl As List[Char]) As Nat
+    Let CLTNres As Nat = 0;
+    For CLTNix = 0 To length(CLTNcl) Then
+        CLTNres = CLTNres + (to_ascii(CLTNcl(CLTNix)) - 48) * Pow(10, length(CLTNcl) - CLTNix - 1);
+    End
+    Return CLTNres;
+End
+
+Func Count[T](countX As T, countXS As List[T]) As Nat
+    Let countR = 0;
+    For countI = 0 To length(countXS) Then
+        If countXS(countI) == countX Then
+            countR = countR + 1;
+        End
+    End
+    Return countR;
+End
+
+Func Max(maxX As Nat, maxY As Nat) As Nat
+    If maxX > maxY Then
+        Return maxX;
+    Else
+        Return maxY;
+    End
+End
+
+Func Min(minX As Nat, minY As Nat) As Nat
+    If minX > minY Then
+        Return minY;
+    Else
+        Return minX;
+    End
+End
+
+Func Reverse[T](reverseXS As List[T]) As List[T]
+    Let reverseR As List[T] = [];
+    For reverseI = 0 To length(reverseXS) Then
+        reverseR = cons(reverseXS(reverseI), reverseR);
+    End
+    Return reverseR;
+End
+
+Func Sort(sortXS As List[Nat]) As List[Nat]
+    Let sortX As Nat = 1;
+    Let sortYS As List[Nat] = sortXS;
+    While sortX < length(sortXS) Then
+        Let sortY As Nat = sortX;
+        While sortY > 0 and sortYS(Max(0, sortY - 1)) > sortYS(sortY) Then
+            Let sortP As Nat = sortYS(sortY);
+            Let sortQ As Nat = sortYS(sortY - 1);
+            sortYS(sortY) = sortQ;
+            sortYS(sortY - 1) = sortP;
+            sortY = sortY - 1;
+        End
+        sortX = sortX + 1;
+    End
+    Return sortYS;
+End
+
+Func WithoutIndex[T](wiIndex As Nat, wiList As List[T]) As List[T]
+    Let wiTemp As List[T] = [];
+    For wiI = 0 To length(wiList) Then
+        If wiI != wiIndex Then
+    	    wiTemp = cons(wiList(wiI), wiTemp);
+        End
+    End
+    Return Reverse(wiTemp);
+End
+"Dabulang STD end";
+
+Func IsSafe(list As List[Nat]) As Nat
+    If list != Sort(list) and list != Reverse(Sort(list)) Then
+        Return 0;
+    End
+    For safeI = 1 To length(list) Then
+        If Abs(list(safeI - 1) - list(safeI)) == 0 or Abs(list(safeI - 1) - list(safeI)) > 3 Then
+            Return 0;
+        End
+    End
+    Return 1;
+End
+
+Let safe As Nat = 0;
+
+For i = 0 To length(l) Then
+    Let line As List[Char] = to_char_list(l(i));
+    Let index As Nat = 0;
+    Let values As List[Nat] = [];
+
+    For j = 0 To Count(' ', line) + 1 Then
+        Let temp As List[Char] = [];
+        While index < length(line) and line(Min(index, length(line) - 1)) != ' ' Then
+            temp = cons(line(index), temp);
+            index = index + 1;
+        End
+        Let value As Nat = CharListToNat(Reverse(temp));
+        values = cons(value, values);
+        index = index + 1;
+    End
+    
+    values = Reverse(values);
+    Let safety As Nat = IsSafe(values);
+    If safety == 1 Then
+        safe = safe + 1;
+    End
+End
+
+print(safe);
+
+safe = 0;
+For i = 0 To length(l) Then
+    Let line As List[Char] = to_char_list(l(i));
+    Let index As Nat = 0;
+    Let values As List[Nat] = [];
+
+    For j = 0 To Count(' ', line) + 1 Then
+        Let temp As List[Char] = [];
+        While index < length(line) and line(Min(index, length(line) - 1)) != ' ' Then
+            temp = cons(line(index), temp);
+            index = index + 1;
+        End
+        Let value As Nat = CharListToNat(Reverse(temp));
+        values = cons(value, values);
+        index = index + 1;
+    End
+    
+    values = Reverse(values);
+    If IsSafe(values) == 1 Then
+        safe = safe + 1;
+    Else
+        For j = 0 To length(values) Then
+            Let tempList As List[Nat] = WithoutIndex(j, values);
+            If IsSafe(tempList) == 1 Then
+                safe = safe + 1;
+                Break;
+            End
+        End
+    End
+End
+
+print(safe);
