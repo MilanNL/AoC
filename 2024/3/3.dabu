@@ -1,0 +1,130 @@
+Func Count[T](countX As T, countXS As List[T]) As Nat
+    Let countR = 0;
+    For countI = 0 To length(countXS) Then
+        If countXS(countI) == countX Then
+            countR = countR + 1;
+        End
+    End
+    Return countR;
+End
+
+Func Min(minX As Nat, minY As Nat) As Nat
+    If minX > minY Then
+        Return minY;
+    Else
+        Return minX;
+    End
+End
+
+Func Pow(powX As Nat, powY As Nat) As Nat
+    Let powR As Nat = 1;
+    For powI = 0 To powY Then
+        powR = powR * powX;
+    End
+    Return powR;
+End
+
+Func Reverse[T](reverseXS As List[T]) As List[T]
+    Let reverseR As List[T] = [];
+    For reverseI = 0 To length(reverseXS) Then
+        reverseR = cons(reverseXS(reverseI), reverseR);
+    End
+    Return reverseR;
+End
+
+Func WithoutIndex[T](wiIndex As Nat, wiList As List[T]) As List[T]
+    Let wiTemp As List[T] = [];
+    For wiI = 0 To length(wiList) Then
+        If wiI != wiIndex Then
+    	    wiTemp = cons(wiList(wiI), wiTemp);
+        End
+    End
+    Return Reverse(wiTemp);
+End
+
+Func Split(splitCx As String, splitListx As String) As List[String]
+    Let splitC As List[Char] = to_char_list(splitCx);
+    Let splitList As List[Char] = to_char_list(splitListx);
+
+    Let splitIndex As Nat = 0;
+    Let splitValues As List[String] = [];
+
+    Let splitTemp As List[Char] = [];
+    While splitIndex < length(splitList) Then
+        Let splitOffset = 0;
+        For splitI = 0 To length(splitC) Then
+            If splitList(splitIndex + splitOffset) == splitC(splitOffset) Then
+                splitOffset = splitOffset + 1;
+            Else
+                Break;
+            End
+        End
+
+        If splitOffset == length(splitC) Then
+            splitValues = cons(to_string(Reverse(splitTemp)), splitValues);
+            splitIndex = splitIndex + splitOffset;
+            splitTemp = WithoutIndex(0, [' ']);
+        Else
+            splitTemp = cons(splitList(splitIndex), splitTemp);
+            splitIndex = splitIndex + 1;
+        End
+    End
+
+    splitValues = cons(to_string(Reverse(splitTemp)), splitValues);
+    Return Reverse(splitValues);
+End
+
+Func SafeRead(readXS As List[Char]) As Nat
+    Let readR As Nat = 0;
+    For readI = 0 To length(readXS) Then
+        If to_ascii(readXS(readI)) < 48 or to_ascii(readXS(readI)) > 57 Then
+            Return -1;
+        End
+        readR = readR + (to_ascii(readXS(readI)) - 48) * Pow(10, length(readXS) - readI - 1);
+    End
+    Return readR;
+End
+
+Const l As List[String] = read_file("C:\Users\milan\aocm\2024\3\3.txt");
+
+Let sum As Nat = 0;
+For i = 0 To length(l) Then
+    Let Muls As List[String] = Split("mul(", l(i));
+    For j = 0 To length(Muls) Then
+        Let s1 As List[String] = Split(",", Muls(j));
+        Let s2 As List[String] = Split(")", s1(Min(length(s1) - 1, 1)));
+        Let v1 As Nat = SafeRead(to_char_list(s1(0)));
+        Let v2 As Nat = SafeRead(to_char_list(s2(0)));
+        If v1 > -1 and v2 > -1 Then
+            sum = sum + v1 * v2;
+        End
+    End
+End
+
+print(sum);
+
+sum = 0;
+Let enabled As Bool = True;
+For i = 0 To length(l) Then
+    Let Muls As List[String] = Split("mul(", l(i));
+    For j = 0 To length(Muls) Then
+        Let s1 As List[String] = Split(",", Muls(j));
+        Let s2 As List[String] = Split(")", s1(Min(length(s1) - 1, 1)));
+        Let v1 As Nat = SafeRead(to_char_list(s1(0)));
+        Let v2 As Nat = SafeRead(to_char_list(s2(0)));
+        If v1 > -1 and v2 > -1 and enabled Then
+            sum = sum + v1 * v2;
+        End
+
+        Let dos As List[String] = Split("do()", Muls(j));
+        Let donts As List[String] = Split("don't()", Muls(j));
+        If length(to_char_list(dos(length(dos) - 1))) > length(to_char_list(donts(length(donts) - 1))) Then
+            enabled = False;
+        End
+        If length(to_char_list(dos(length(dos) - 1))) < length(to_char_list(donts(length(donts) - 1))) Then
+            enabled = True;
+        End
+    End
+End
+
+print(sum);
