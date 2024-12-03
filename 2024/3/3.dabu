@@ -85,7 +85,7 @@ Func SafeRead(readXS As List[Char]) As Nat
     Return readR;
 End
 
-Const l As List[String] = read_file("C:\Users\milan\aocm\2024\3\3.txt");
+Const l As List[String] = read_file("3.txt");
 
 Let sum As Nat = 0;
 For i = 0 To length(l) Then
