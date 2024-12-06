@@ -1,0 +1,95 @@
+"Warning before you execute, since the first loop takes ~65 seconds,";
+"the second loop should take ~85 hours xD";
+
+Func Count[T](countX As T, countXS As List[T]) As Nat
+    Let countR = 0;
+    For countI = 0 To length(countXS) Then
+        If countXS(countI) == countX Then
+            countR = countR + 1;
+        End
+    End
+    Return countR;
+End
+
+Func IndexOf[T](indexofElem As T, indexofList As List[T]) As Nat
+    For indexofI = 0 To length(indexofList) Then
+        If indexofList(indexofI) == indexofElem Then
+            Return indexofI;
+        End
+    End
+    Return length(indexofList);
+End
+
+Func IntToNat(itnI As Int) As Nat
+    If True Then
+        Return itnI;
+    End
+    Return 1;
+End
+
+Const l As List[String] = read_file("6.txt");
+
+Let pos As List[Nat] = [0,0];
+
+For i = 0 To length(l) Then
+    If Count('^', to_char_list(l(i))) > 0 Then
+        pos = [IndexOf('^', to_char_list(l(i))), i];
+        Break;
+    End
+End
+
+Let startPos As List[Nat] = pos;
+
+Let xdir As Int = -0;
+Let ydir As Int = -1;
+Let poss As List[List[Nat]] = [pos];
+
+While pos(0) + xdir > -1 and pos(1) + ydir > -1 and pos(0) + xdir < length(to_char_list(l(0))) and pos(1) + ydir < length(l) Then
+    Let xD As List[Char] = to_char_list(l(IntToNat(pos(1) + ydir)));
+    If xD(IntToNat(pos(0) + xdir)) == '#' Then
+        Let oldxdir As Int = xdir;
+        xdir = ydir * -1;
+        ydir = oldxdir;
+    End
+    pos = [IntToNat(pos(0) + xdir), IntToNat(pos(1) + ydir)];
+    If Count(pos, poss) == 0 Then
+        poss = cons(pos, poss);
+    End
+End
+
+print(length(poss));
+
+Let lx As List[String] = l;
+Let sum As Nat = 0;
+For i = 0 To length(poss) Then
+    Let possi As List[Nat] = poss(i);
+    Let lxc As List[Char] = to_char_list(lx(possi(1)));
+    lxc(possi(0)) = '#';
+    lx(possi(1)) = to_string(lxc);
+
+    pos = startPos;
+    xdir = -0;
+    ydir = -1;
+    Let posss As List[List[Nat]] = [[pos(0), pos(1), IntToNat(xdir), IntToNat(ydir)]];
+
+    While pos(0) + xdir > -1 and pos(1) + ydir > -1 and pos(0) + xdir < length(to_char_list(l(0))) and pos(1) + ydir < length(l) Then
+        Let xD As List[Char] = to_char_list(lx(IntToNat(pos(1) + ydir)));
+        If xD(IntToNat(pos(0) + xdir)) == '#' Then
+            Let oldxdir As Int = xdir;
+            xdir = ydir * -1;
+            ydir = oldxdir;
+        Else
+            pos = [IntToNat(pos(0) + xdir), IntToNat(pos(1) + ydir)];
+            If Count([pos(0), pos(1), IntToNat(xdir), IntToNat(ydir)], posss) > 0 Then
+                sum = sum + 1;
+                Break;
+            Else
+                posss = cons([pos(0), pos(1), IntToNat(xdir), IntToNat(ydir)], posss);
+            End
+        End
+    End
+
+    lx(possi(1)) = l(possi(1));
+End
+
+print(sum);
