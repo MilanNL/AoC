@@ -1,1 +1,2 @@
 *.dabu linguist-language=TI-Program
+*.dabu linguist-generated # dont show up in stats
